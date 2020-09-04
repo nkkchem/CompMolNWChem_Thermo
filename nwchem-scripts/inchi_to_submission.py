@@ -1,0 +1,140 @@
+"""
+Script to read INCHIKEY and INCHI-STRING to generate .xyz, .mol, .nw and .sbatch
+files and to submit jobs
+
+Needs test.csv file with data
+
+--> excute these two first in shell to activate rdkit
+
+conda create -c rdkit -n my-rdkit-env rdkit
+conda activate my-rdkit-env
+
+"""
+
+from __future__ import print_function
+from rdkit import Chem
+from rdkit.Chem import AllChem
+import rdkit
+from rdkit.Chem import Draw
+import os
+import sys
+import subprocess
+from pybel import *
+from csv import DictReader
+
+# Generate dft folder from inchi string
+
+#os.system('rm -rf Z* A* K* D* F* P* W* X*')
+
+def inchi_to_dft(InChI_key,InChIes):
+    os.chdir('../../../simulation')
+    dd = dict(zip(InChI_key, InChIes))
+    #print('dd:',dd)
+    #print('dd_items:',dd.items())
+    #dd = dict(InChI_key=InChIes)
+    #print(dd)
+    for key, value in dd.items():
+        os.mkdir(key)
+        os.chdir(key)
+        #print('key:',key)
+        #print('value:',value)
+        #m4 = Chem.inchi.MolFromInchi(value)
+        m4 = Chem.MolFromSmiles(value)
+        #print('m4:',m4)
+        AllChem.Compute2DCoords(m4)
+        m5 = Chem.AddHs(m4)
+        #print('m5',m5)
+        if m5.GetNumAtoms() > 110:
+            AllChem.EmbedMolecule(m5, useRandomCoords=True)
+        else:
+            AllChem.EmbedMolecule(m5)
+    
+        AllChem.MMFFOptimizeMolecule(m5)
+        ii = Chem.MolToMolBlock(m5).splitlines()
+    
+        os.mkdir('dft')   # create dft files
+        os.chdir('dft')
+    
+        f=open(str(key)+".xyz", 'w')
+        f.write(str(m5.GetNumAtoms()))
+        f.write('\n\n')
+        for i in range(4, 4+m5.GetNumAtoms()):
+            jj=' '.join((ii[i].split()))
+            kk=jj.split()
+            f.write("{}\t{:>8}  {:>8}  {:>8}\n".format(kk[3], kk[0], kk[1], kk[2]))
+        f.close()
+
+    #
+    #   write .nw file
+    #
+        nw=open(str(key)+".nw", 'w')
+        nw.write("title " +'"'+key+'"'+'\n')
+        nw.write('start '+key+'\n\n')
+        nw.write('memory global 1600 mb heap 100 mb stack 600 mb'+'\n\n')
+        nw.write('permanent_dir ' + os.getcwd()+'\n')
+        nw.write('#scratch_dir /scratch'+'\n\n')
+        nw.write('echo'+'\n')
+        nw.write('print low'+'\n\n')
+        nw.write('charge ' + str(rdkit.Chem.rdmolops.GetFormalCharge(m5))+'\n')
+        nw.write('geometry noautoz noautosym'+'\n')
+        nw.write('load '+ os.getcwd()+'/'+key+'.xyz'+'\n')
+        nw.write('end'+'\n')
+        nw.write('basis "small"'+'\n')
+        nw.write('* library 6-31G*'+'\n')
+        nw.write('end'+'\n\n')
+        nw.write('set "ao basis" "small"' + '\n\n')
+        nw.write('driver'+'\n')
+        nw.write(' maxiter 200'+'\n')
+        nw.write('xyz ' + str(key)+'_geom'+'\n')
+        nw.write('end'+'\n\n')
+        nw.write('set lindep:n_dep 0'+'\n\n')
+        nw.write('dft'+'\n')
+        nw.write('  maxiter 200'+'\n')
+        nw.write('  xc b3lyp'+'\n')
+        nw.write('  disp vdw 3'+'\n')
+        nw.write('  mulliken'+ '\n')
+        nw.write('  print "mulliken ao"'+'\n')
+        nw.write('  print "final vectors analysis"'+'\n')
+        nw.write('end'+'\n\n')
+        nw.write('task dft optimize ignore'+'\n')
+        nw.write('task dft freq'+'\n\n')
+# large basis set for single point calc with SCAN
+        nw.write('basis "large" spherical' + '\n')
+        nw.write('* library 6-311++G**' + '\n')
+        nw.write('end'+'\n\n')
+        nw.write('set "ao basis" "large"' +'\n\n')
+#
+        nw.write('geometry noautoz '+'\n')
+        nw.write('dft'+'\n')
+        nw.write('  maxiter 250'+'\n')
+        nw.write('  xc scan'+'\n')
+        nw.write('  grid xfine'+'\n')
+        nw.write('  CONVERGENCE energy 1e-6 '+ '\n')
+        nw.write('  CONVERGENCE density 5e-4'+ '\n')
+        nw.write('  CONVERGENCE gradient 1e-4'+ '\n')
+        nw.write('  mulliken'+ '\n')
+        nw.write('  print "mulliken ao"'+'\n')
+        nw.write('  print "final vectors analysis"'+'\n')
+        nw.write('  vectors input atomic output large2.movecs' + '\n')
+        nw.write('  smear' + '\n')
+        nw.write(' convergence ncydp 0 damp 45 dampon 1d99 dampoff 1d-4' +'\n')
+        nw.write('end'+'\n\n')
+        nw.write('task dft energy ignore'+'\n')
+        nw.write('cosmo'+'\n')
+        nw.write(' do_cosmo_smd true' + '\n')
+        nw.write(' dielec 80.4'+'\n')
+        nw.write(' lineq  0'+'\n')
+        nw.write('end'+'\n\n')
+        nw.write('task dft energy ignore'+'\n')
+        nw.write('set dft:converged t'+'\n')
+        nw.write('property'+'\n')
+        nw.write(' dipole'+'\n')
+        nw.write('end'+'\n\n')
+        nw.write('task dft property'+'\n')
+# end of input for SCAN
+        nw.close()
+        
+        nwfile = str(key)+".nw"
+        out_file = str(key) +'_nwchem.out'
+        os.system("mpirun -np 2 --allow-run-as-root nwchem *.nw > {}".format(out_file))
+        os.chdir('../..')
