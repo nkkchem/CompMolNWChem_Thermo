@@ -1,8 +1,8 @@
 /*
-A KBase module: CompMolNWChem
+A KBase module: CompMolNWChem_Thermo
 */
 
-module CompMolNWChem {
+module CompMolNWChem_Thermo {
     typedef structure {
         string report_name;
         string report_ref;

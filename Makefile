@@ -1,7 +1,7 @@
-SERVICE = compmolnwchem
-SERVICE_CAPS = CompMolNWChem
-SPEC_FILE = CompMolNWChem.spec
-URL = https://kbase.us/services/compmolnwchem
+SERVICE = compmolnwchem_thermo
+SERVICE_CAPS = CompMolNWChem_Thermo
+SPEC_FILE = CompMolNWChem_Thermo.spec
+URL = https://kbase.us/services/compmolnwchem_thermo
 DIR = $(shell pwd)
 LIB_DIR = lib
 SCRIPTS_DIR = scripts

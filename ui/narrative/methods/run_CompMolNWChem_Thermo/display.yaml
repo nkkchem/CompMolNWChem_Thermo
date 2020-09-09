@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: NWChem Computational Chemistry Calculations
+name: NWChem Computational Chemistry Calculations Thermodynamics
 
 tooltip: |
     Perform computational chemistry calculations using NWChem to obtain quantum chemical properties
@@ -26,7 +26,7 @@ suggestions:
 parameters :
     Input_File :
         ui-name : |
-            SMILES representation of the molecule
+            ModelSEED reaction or compound list
         short-hint : |
             The SMILES stringh or the csv file containing smiles strings 
         long-hint  : |

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #BEGIN_HEADER
+
 import logging
 import os
 import sys
@@ -16,12 +17,20 @@ import zipfile
 import uuid
 import copy
 import shutil
+import argparse
+
+os.system('pip install snakemake')
 
 from pybel import *
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 from csv import DictReader
+#from mulitprocessing import cpu_count
+from os.path import *
+from pkg_resources import resource_filename
+from cme import *
+from snakemake import snakemake
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.DataFileUtilClient import DataFileUtil
 from installed_clients.CompoundSetUtilsClient import CompoundSetUtils
@@ -31,13 +40,13 @@ from installed_clients.CompoundSetUtilsClient import CompoundSetUtils
 #END_HEADER
 
 
-class CompMolNWChem:
+class CompMolNWChem_Thermo:
     '''
     Module Name:
-    CompMolNWChem
+    CompMolNWChem_Thermo
 
     Module Description:
-    A KBase module: CompMolNWChem
+    A KBase module: CompMolNWChem_Thermo
     '''
 
     ######## WARNING FOR GEVENT USERS ####### noqa
@@ -47,8 +56,8 @@ class CompMolNWChem:
     # the latter method is running.
     ######################################### noqa
     VERSION = "0.0.1"
-    GIT_URL = "https://github.com/nkkchem/CompMolNWChem.git"
-    GIT_COMMIT_HASH = "496b69853840cfaacbd146fce50466e73701bcc7"
+    GIT_URL = "https://github.com/nkkchem/CompMolNWChem_Thermo.git"
+    GIT_COMMIT_HASH = ""
 
     #BEGIN_CLASS_HEADER
     def _generate_output_file_list(self, result_directory):
@@ -157,7 +166,7 @@ class CompMolNWChem:
         pass
 
 
-    def run_CompMolNWChem(self, ctx, params):
+    def run_CompMolNWChem_Thermo(self, ctx, params):
         """
         This example function accepts any number of parameters and returns results in a KBaseReport
         :param params: instance of mapping from String to unspecified object
@@ -166,7 +175,7 @@ class CompMolNWChem:
         """
         # ctx is the context object
         # return variables are: output
-        #BEGIN run_CompMolNWChem
+        #BEGIN run_CompMolNWChem_Thermo
 
         # Initial Tests to Check for Proper Inputs
 
@@ -195,98 +204,157 @@ class CompMolNWChem:
             compounds = parse.read_tsv(scratch_file_path,
                                        mol2_file_dir=mol2_file_dir,
                                        callback_url=self.callback_url)
-        else:
-            raise ValueError('Invalid input file type. Expects .tsv or .sdf')
+        #elif ext == '.csv':
+        #    compounds = parse.read_csv(scratch_file_path,
+        #                               mol2_file_dir=mol2_file_dir,
+        #                               callback_url=self.callback_url)
+        #else:
+        #    raise ValueError('Invalid input file type. Expects .tsv or .sdf')
 
         #DEBUG::
         #print('Compounds:',compounds)
 
-        compoundset = {
-            'id': params['Input_File'],
-            'name': params['Input_File'],
-            'description': 'Compound Set produced from %s' % file_name,
-            'compounds': compounds,
-        }
+#        compoundset = {
+#            'id': params['Input_File'],
+#            'name': params['Input_File'],
+#            'description': 'Compound Set produced from %s' % file_name,
+#            'compounds': compounds,
+#        }
 
         # Finish Reading in Compound Set
-        
+
         # Read ids and smiles from compound set for nwchem input
         
-        ids = []
-        smiles = []
+#        ids = []
+#        smiles = []
 
-        for d in compounds:
-           ids.append(d['id'])
-           smiles.append(d['smiles'])
+#        for d in compounds:
+#           ids.append(d['id'])
+#           smiles.append(d['smiles'])
         #print(ids)
         #print(smiles)
+        
 
+        
         # Read the ids and structures of the compounds
         
-        its.inchi_to_dft(ids,smiles)
+#        its.inchi_to_dft(ids,smiles)
 
         #DEBUG::
         #os.system('pwd')
         #os.system('ls')
         
-        length = len(ids)
-        for i in range(length):
-            os.chdir('./'+ids[i]+'/dft')
-            x = ids[i] + '_nwchem.out'
+#        length = len(ids)
+#        for i in range(length):
+#            os.chdir('./'+ids[i]+'/dft')
+#            x = ids[i] + '_nwchem.out'
             #print('x:',x)
-            file1 = open(x, 'r')
-            nAtoms = mul.getNumberOfAtoms(file1)
-            energy = mul.getInternalEnergy0K(file1)
-            charge =mul.getMullikenCharge(file1,nAtoms)
-            file1.close()
+#            file1 = open(x, 'r')
+#            nAtoms = mul.getNumberOfAtoms(file1)
+#            energy = mul.getInternalEnergy0K(file1)
+#            charge =mul.getMullikenCharge(file1,nAtoms)
+#            file1.close()
            
-            mul.nAtoms = nAtoms
-            mul.E0K = energy
+#            mul.nAtoms = nAtoms
+#            mul.E0K = energy
 
-            mul.calculate(ids[i])
+#            mul.calculate(ids[i])
+
+       
+        from snakemake import snakemake
+
+        reactionlist = scratch_file_path
+
+        id_to_smiles = {}
+        data = open('/kb/module/modelseed_test.csv','r')
+
+        for lines in data.readlines():
+            id = lines.split(',')[0]
+            smiles = lines.split(',')[1].rstrip()
+            id_to_smiles[id] = smiles
+
+        data.close()
+
+        with open(reactionlist,'r') as f:
+            reactions = f.readlines()[0].rstrip()
+            reactant = reactions.split('=')[0].split('+')
+            product = reactions.split('=')[1].split('+')
+            metabolites = []
+            for each in reactant:
+                each = each.strip()
+                metabolites.append(each)
+            for each in product:
+                each = each.strip()
+                metabolites.append(each)
+
+            for molecule in metabolites:
+                
+                moldir = molecule
+                if not os.path.exists(moldir):
+                    os.mkdir(moldir)
+    
+                initial_structure_dir = moldir + '/initial_structure'
+                if not os.path.exists(initial_structure_dir):
+                    os.mkdir(initial_structure_dir)
+
+                md_structure_dir = moldir + '/md'
+                if not os.path.exists(md_structure_dir):
+                    os.mkdir(md_structure_dir)
+
+                dft_structure_dir = moldir + '/dft'
+                if not os.path.exists(dft_structure_dir):
+                    os.mkdir(dft_structure_dir)
+
+                inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
+                with open(inchifile_str,'w+') as f:
+                    f.write(id_to_smiles[moldir])
+        
+        os.system('snakemake -p --cores 3 --snakefile snakemake-scripts/final_pipeline.snakemake -w 12000')
 
         # Build KBase Output. Should output entire /simulation directory and build a CompoundSet with Mol2 Files
 
-        result_directory = '/simulation/'
+        #result_directory = '/kb/module/snakemake-scripts'
+        result_directory = '/kb/module/'
 
         ## Build CompoundSet with Mol2 Files... similarly to fetch_mol2_files_from_zinc (CompoundSetUtils)....
 
-        compoundset_copy = copy.deepcopy(compoundset)
+#        compoundset_copy = copy.deepcopy(compoundset)
 
-        count = 0
+#        count = 0
 
-        for compound in compoundset_copy.get('compounds'):
-            if not compound.get('mol2_handle_ref'):
-                mol2_file_path = result_directory+compound.get('id')
-                SMILES = compound.get('smiles')
+#        for compound in compoundset_copy.get('compounds'):
+#            if not compound.get('mol2_handle_ref'):
+#                mol2_file_path = result_directory+compound.get('id')
+#                SMILES = compound.get('smiles')
 
-                shutil.move(mol2_file_path,self.scratch)
+#                shutil.move(mol2_file_path,self.scratch)
 
-                os.chdir(self.scratch)
+#                os.chdir(self.scratch)
                
-                mol2_file_path = self.scratch + '/'+ compound.get('id')+'/dft/' + compound.get('id')+'_Mulliken.mol2'              
-                handle_id = self.dfu.file_to_shock({'file_path': mol2_file_path,
-                                                    'make_handle': True})['handle']['hid']
-                print('Handle ID:',handle_id)
-                compound['mol2_handle_ref'] = handle_id
-                count += 1
+#                mol2_file_path = self.scratch + '/'+ compound.get('id')+'/dft/' + compound.get('id')+'_Mulliken.mol2'              
+#                handle_id = self.dfu.file_to_shock({'file_path': mol2_file_path,
+#                                                    'make_handle': True})['handle']['hid']
+#                print('Handle ID:',handle_id)
+#                compound['mol2_handle_ref'] = handle_id
+#                count += 1
 
                
                
-        if count:
-            message = 'Successfully fetched {} Mol2 files from Staging Path'.format(count)
+#        if count:
+#            message = 'Successfully fetched {} Mol2 files from Staging Path'.format(count)
 
 
         ## Create Extended Report
-
-        output_files = self._generate_output_file_list(self.scratch)
-
-
-        report_params = {'message': message,
-                         'workspace_id': params['workspace_id'],
-                         'objects_created': [],
-                         'file_links': output_files,
-                         'report_object_name': 'kb_deseq2_report_' + str(uuid.uuid4())}
+        
+        output_files = self._generate_output_file_list(result_directory)
+        #output_files = 
+        
+        report_params = {
+            'message':'',
+            'workspace_id': params['workspace_id'],
+            'objects_created': [],
+            'file_links':output_files,
+            'report_object_name': 'kb_deseq2_report_' + str(uuid.uuid4())}
 
         report = KBaseReport(self.callback_url)
         
@@ -297,22 +365,10 @@ class CompMolNWChem:
             'report_ref': report_info['ref'],
         }
 
-        output2 = self._save_to_ws_and_report(
-            params['workspace_id'],'', compoundset_copy,
-            message=message)
-            
-        
-        return [output,output2]
-
-
-        #END run_CompMolNWChem
-
-        # At some point might do deeper type checking...
-        if not isinstance(output, dict):
-            raise ValueError('Method run_CompMolNWChem return value ' +
-                             'output is not type dict as required.')
-        # return the results
         return [output]
+
+        #END run_CompMolNWChem_Thermo
+        
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

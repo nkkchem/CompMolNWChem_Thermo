@@ -45,8 +45,8 @@
     "behavior": {
         "service-mapping": {
             "url": "",
-            "name": "CompMolNWChem",
-            "method": "run_CompMolNWChem",
+            "name": "CompMolNWChem_Thermo",
+            "method": "run_CompMolNWChem_Thermo",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
