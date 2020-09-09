@@ -11,6 +11,6 @@ module CompMolNWChem_Thermo {
     /*
         This example function accepts any number of parameters and returns results in a KBaseReport
     */
-    funcdef run_CompMolNWChem(mapping<string,UnspecifiedObject> params) returns (ReportResults output) authentication required;
+    funcdef run_CompMolNWChem_Thermo(mapping<string,UnspecifiedObject> params) returns (ReportResults output) authentication required;
 
 };
