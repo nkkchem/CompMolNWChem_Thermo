@@ -193,7 +193,7 @@ class CompMolNWChem_Thermo:
 
         else:
 
-            Equation_Input = params["Input_File"
+            Equation_Input = params["Input_File"]
 
         mol2_file_dir = None        
         ext = os.path.splitext(Equation_Input)[1]
