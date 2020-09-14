@@ -333,9 +333,11 @@ class CompMolNWChem_Thermo:
         
         output_files = self._generate_output_file_list(result_directory)
         #output_files = 
+
+        message = "Reaction free energy for given reaction is " + str(G_products-G_reactants)
         
         report_params = {
-            'message':("Reaction free energy for given reaction is: ", G_products-G_reactants),
+            'message':message,
             'workspace_id': params['workspace_id'],
             'objects_created': [],
             'file_links':output_files,
