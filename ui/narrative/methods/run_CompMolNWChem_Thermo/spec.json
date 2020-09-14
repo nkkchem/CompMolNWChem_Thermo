@@ -15,31 +15,40 @@
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
-            "default_values": [ "test_compounds.tsv" ],
-            "field_type": "dynamic_dropdown",
+            "default_values": [ "E.C.:3.2.1.52" ],
+            "field_type": "text",
             "text_options": {
                 "valid_ws_types": [""]
             }
         },
+	{
+	    "id":"Input_Method",
+	    "optional": false,
+	    "advanced": false,
+	    "allow_multiple": false,
+	    "default_values": ['Reaction ID']
+	    "field_type": "dropdown"
+	    "dropdown_options": {
+		"options": [
+		    {
+			"display": "Reaction ID",
+			"value": "id"
+		    },
+		    {
+			"display": "Reaction File",
+			"value": "file"
+		    }
+		]
+	    }
+	},    
         {
-            "id": "calculation_type",
-            "optional": false,
+            "id": "Input_List",
+            "optional": true,
             "advanced": false,
             "allow_multiple": false,
-            "default_values": [ "energy" ],
-            "field_type": "dropdown",
-            "dropdown_options": {
-                "options": [
-                    {
-                        "display": "Energy and mol2",
-                        "value": "energy and mol2"
-                    },
-                    {
-                        "display": "Optimization and mol2",
-                        "value": "optimization and mol2"
-                    }
-                ]
-            }
+            "default_values": [ "reactions.csv" ],
+            "field_type": "dynamic_dropdown",
+            
         }
     ],
     "behavior": {
@@ -58,9 +67,12 @@
                     "input_parameter": "Input_File",
                     "target_property": "Input_File"
                 },{
-                    "input_parameter": "calculation_type",
-                    "target_property": "calculation_type"
-                }
+                    "input_parameter": "Input_Method",
+                    "target_property": "Input_Method"
+                },{
+		    "input_parameter": "Input_List",
+		    "target_property": "Input_List"
+		}
             ],
             "output_mapping": [
                 {

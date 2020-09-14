@@ -4,7 +4,7 @@
 name: NWChem Computational Chemistry Calculations Thermodynamics
 
 tooltip: |
-    Perform computational chemistry calculations using NWChem to obtain quantum chemical properties
+    Perform computational chemistry calculations using NWChem to obtain quantum chemical properties in order to obtain the thermodynamic properties of the system.
 
 screenshots: []
 
@@ -26,18 +26,26 @@ suggestions:
 parameters :
     Input_File :
         ui-name : |
-            ModelSEED reaction or compound list
+            Reaction ID, either in E.C or ModelSEED reaction ID form
         short-hint : |
-            The SMILES stringh or the csv file containing smiles strings 
+            
         long-hint  : |
-            The SMILES string that defines molecule
-    calculation_type :
+            An E.C reaction ID in the form of E.C.:3.2.1.52 or a ModelSEED reaction ID in the form of rxn38348
+    Input_Method :
+    	ui-name : |
+	    Single reaction input or list input?
+	short-hint : |
+	    What form is your input in text or list?
+	long-hint : |
+	    If you want to know the thermodynamics of a singular reactions, type it in above. If you want to know the thermodynamics for a list of reactions, upload the file.
+    Input_List :
         ui-name : |
-            type of the calculation
+            List of Reaction IDs in .csv form
         short-hint : |
-            type of the calculation
+            A list of need to know reactions in list form
         long-hint  : |
-            specification of the calculation
+            An optional input to run a list of reactions that you wish to know the delta_g for
+	    
 
 description : |
-   <p>Calculate total energy of the molecule using NWChem computational chemistry package. </p>
+   <p>Calculate the thermodynamics of the modelSEED compounds by using a snakemake NWChem computational chemistry pipeline to obtain the delta_g of the reaction. </p>

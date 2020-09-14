@@ -177,37 +177,27 @@ class CompMolNWChem_Thermo:
 
         # Initial Tests to Check for Proper Inputs
 
-        for name in ['Input_File','calculation_type','workspace_name']:
+        for name in ['Input_File','Input_Method','workspace_name']:
             if name not in params:
                 raise ValueError('Parameter "' + name + '"is required but missing')
         if not isinstance(params['Input_File'], str):
             raise ValueError('Input_File must be a string')
 
         
-        # Load the tsv file into a compound set using DataFileUtil methods
-        
-        scratch_file_path = self.dfu.download_staging_file({'staging_file_subdir_path':params['Input_File']}
-                                       ).get('copy_file_path')
+        # Check the Input Method and set Equation_Input as the necessary 
 
-        #print('Scratch File Path: ',scratch_file_path)
+        if params['Input_Method'] == "Reaction File":
+        
+            Equation_Input = self.dfu.download_staging_file({'staging_file_subdir_path':params['Input_File']}
+            ).get('copy_file_path')
+
+        else:
+
+            Equation_Input = params["Input_File"
 
         mol2_file_dir = None        
-        ext = os.path.splitext(scratch_file_path)[1]
-        file_name = os.path.basename(scratch_file_path)
-        if ext == '.sdf':
-            compounds = parse.read_sdf(scratch_file_path,
-                                       mol2_file_dir=mol2_file_dir,
-                                       callback_url=self.callback_url)
-        elif ext == '.tsv':
-            compounds = parse.read_tsv(scratch_file_path,
-                                       mol2_file_dir=mol2_file_dir,
-                                       callback_url=self.callback_url)
-        #elif ext == '.csv':
-        #    compounds = parse.read_csv(scratch_file_path,
-        #                               mol2_file_dir=mol2_file_dir,
-        #                               callback_url=self.callback_url)
-        #else:
-        #    raise ValueError('Invalid input file type. Expects .tsv or .sdf')
+        ext = os.path.splitext(Equation_Input)[1]
+        file_name = os.path.basename(Equation_Input)
        
         # SNAKEMAKE PIPELINE START, READ FILES IN AND CHECK EXISTING REACTIONS
 
@@ -233,7 +223,7 @@ class CompMolNWChem_Thermo:
 
         # map metabolites to the reactions with stoichmetry 
 
-        reactionlist = scratch_file_path
+        reactionlist = Equation_Input
 
         with open(reactionlist,'r') as f:
             reactions = f.readlines()[0].rstrip().replace(' ', '')
