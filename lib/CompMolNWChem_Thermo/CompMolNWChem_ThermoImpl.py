@@ -269,9 +269,9 @@ class CompMolNWChem_Thermo:
                  G_products += stoich_right[jj] * float(modelseedID_to_deltaG[right[kk]])
 
              print("Reaction free energy for given reaction is: ", G_products-G_reactants)
+              Done = True
         else:
             print('Calculations is not finished for one of the metabolotes')
-            Done = True
 
         #If the delta_g for the reaction is not there, we need to run our snakemake pipeline to calculate the reaction free energy
         #for the reaction.
