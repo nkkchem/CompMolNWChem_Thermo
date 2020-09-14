@@ -215,7 +215,7 @@ class CompMolNWChem_Thermo:
 
         modelseedID_to_deltaG = {}
         calculated = []
-
+        Done = False
         # fill with modelseed ID and correspodning delta_G of metabolites
         # This is the dictionary of all Modelseed cpds with their delta_G values
 
