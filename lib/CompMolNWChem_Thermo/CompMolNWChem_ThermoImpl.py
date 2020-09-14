@@ -259,21 +259,34 @@ class CompMolNWChem_Thermo:
             print(stoich_right, right)
             print(stoich_left, left)
 
-        #id_to_smiles = {}
-        #data = open('/kb/module/modelseed_test.csv','r')
 
-        #for lines in data.readlines():
-        #    id = lines.split(',')[0]
-        #    smiles = lines.split(',')[1].rstrip()
-        #    id_to_smiles[id] = smiles
+        # Extract delta_g for reactions for which we have performed calculations
 
-        #data.close()
+        if(set(left).issubset(set(calculated))) and set(right).issubset(set(calculated)):
+             for jj in range(len(left)):
+                 G_reactants +=  stoich_left[jj] * float(modelseedID_to_deltaG[left[jj]])
+             for kk in range(len(right)):
+                 G_products += stoich_right[jj] * float(modelseedID_to_deltaG[right[kk]])
 
+             print("Reaction free energy for given reaction is: ", G_products-G_reactants)
+        else:
+            print('Calculations is not finished for one of the metabolotes')
+
+        id_to_smiles = {}
+        data = open('/kb/module/modelseed_test.csv','r')
+
+        for lines in data.readlines():
+            id = lines.split(',')[0]
+            smiles = lines.split(',')[1].rstrip()
+            id_to_smiles[id] = smiles
+
+        data.close()
+                
         #with open(reactionlist,'r') as f:
         #    reactions = f.readlines()[0].rstrip()
         #    reactant = reactions.split('=')[0].split('+')
         #    product = reactions.split('=')[1].split('+')
-            metabolites = []
+        #    metabolites = []
             for each in reactants:
                 each = each.strip()
                 metabolites.append(each)
