@@ -289,35 +289,35 @@ class CompMolNWChem_Thermo:
         #    reactions = f.readlines()[0].rstrip()
         #    reactant = reactions.split('=')[0].split('+')
         #    product = reactions.split('=')[1].split('+')
-            metabolites = []
-            for each in reactants:
-                each = each.strip()
-                metabolites.append(each)
-            for each in products:
-                each = each.strip()
-                metabolites.append(each)
+        metabolites = []
+        for each in reactants:
+            each = each.strip()
+            metabolites.append(each)
+        for each in products:
+            each = each.strip()
+            metabolites.append(each)
 
-            for molecule in metabolites:
-                
-                moldir = molecule
-                if not os.path.exists(moldir):
-                    os.mkdir(moldir)
+        for molecule in metabolites:
+        
+            moldir = molecule
+            if not os.path.exists(moldir):
+                os.mkdir(moldir)
     
-                initial_structure_dir = moldir + '/initial_structure'
-                if not os.path.exists(initial_structure_dir):
-                    os.mkdir(initial_structure_dir)
+            initial_structure_dir = moldir + '/initial_structure'
+            if not os.path.exists(initial_structure_dir):
+                os.mkdir(initial_structure_dir)
 
-                md_structure_dir = moldir + '/md'
-                if not os.path.exists(md_structure_dir):
-                    os.mkdir(md_structure_dir)
+            md_structure_dir = moldir + '/md'
+            if not os.path.exists(md_structure_dir):
+                os.mkdir(md_structure_dir)
 
-                dft_structure_dir = moldir + '/dft'
-                if not os.path.exists(dft_structure_dir):
-                    os.mkdir(dft_structure_dir)
+            dft_structure_dir = moldir + '/dft'
+            if not os.path.exists(dft_structure_dir):
+                os.mkdir(dft_structure_dir)
 
-                inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
-                with open(inchifile_str,'w+') as f:
-                    f.write(id_to_smiles[moldir])
+            inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
+            with open(inchifile_str,'w+') as f:
+                f.write(id_to_smiles[moldir])
         
         os.system('snakemake -p --cores 3 --snakefile snakemake-scripts/final_pipeline.snakemake -w 12000')
 
