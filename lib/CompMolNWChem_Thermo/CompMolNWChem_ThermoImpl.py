@@ -290,10 +290,10 @@ class CompMolNWChem_Thermo:
         #    reactant = reactions.split('=')[0].split('+')
         #    product = reactions.split('=')[1].split('+')
         metabolites = []
-        for each in reactants:
+        for each in reactant:
             each = each.strip()
             metabolites.append(each)
-        for each in products:
+        for each in product:
             each = each.strip()
             metabolites.append(each)
 
