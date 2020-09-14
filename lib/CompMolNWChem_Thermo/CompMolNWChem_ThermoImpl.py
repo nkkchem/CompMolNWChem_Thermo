@@ -55,7 +55,7 @@ class CompMolNWChem_Thermo:
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/nkkchem/CompMolNWChem_Thermo.git"
-    GIT_COMMIT_HASH = ""
+    GIT_COMMIT_HASH = "7e7b026e26614c14a308141a82acbb2ee913c1e3"
 
     #BEGIN_CLASS_HEADER
     def _generate_output_file_list(self, result_directory):
@@ -345,7 +345,13 @@ class CompMolNWChem_Thermo:
         return [output]
 
         #END run_CompMolNWChem_Thermo
-        
+
+        # At some point might do deeper type checking...
+        if not isinstance(output, dict):
+            raise ValueError('Method run_CompMolNWChem_Thermo return value ' +
+                             'output is not type dict as required.')
+        # return the results
+        return [output]
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

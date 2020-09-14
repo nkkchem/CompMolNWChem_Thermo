@@ -26,8 +26,8 @@
 	    "optional": false,
 	    "advanced": false,
 	    "allow_multiple": false,
-	    "default_values": ['Reaction ID']
-	    "field_type": "dropdown"
+	    "default_values": ["Reaction ID"],
+	    "field_type": "dropdown",
 	    "dropdown_options": {
 		"options": [
 		    {
@@ -47,7 +47,7 @@
             "advanced": false,
             "allow_multiple": false,
             "default_values": [ "reactions.csv" ],
-            "field_type": "dynamic_dropdown",
+            "field_type": "dynamic_dropdown"
             
         }
     ],

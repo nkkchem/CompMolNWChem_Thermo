@@ -4,48 +4,37 @@
 name: NWChem Computational Chemistry Calculations Thermodynamics
 
 tooltip: |
-    Perform computational chemistry calculations using NWChem to obtain quantum chemical properties in order to obtain the thermodynamic properties of the system.
+ Perform computational chemistry calculations using NWChem to obtain quantum chemical properties in order to obtain the 
 
 screenshots: []
 
 icon: icon.png
 
 #
-# define a set of similar apps that might be useful to the user
-#
-suggestions:
-    apps:
-        related:
-            [app1, app2]
-        next:
-            [app3, app4]
-
-#
 # Configure the display and description of parameters
 #
+
 parameters :
     Input_File :
         ui-name : |
-            Reaction ID, either in E.C or ModelSEED reaction ID form
+            Reaction ID (EC or ModelSEED)
         short-hint : |
-            
+            The desired single reaction with EC or ModelSEED IDs
         long-hint  : |
-            An E.C reaction ID in the form of E.C.:3.2.1.52 or a ModelSEED reaction ID in the form of rxn38348
+            The desired single reaction with EC (E.C.:3.2.1.52) reaction ID or ModelSEED (rxn38348) reaction ID
     Input_Method :
-    	ui-name : |
-	    Single reaction input or list input?
-	short-hint : |
-	    What form is your input in text or list?
-	long-hint : |
-	    If you want to know the thermodynamics of a singular reactions, type it in above. If you want to know the thermodynamics for a list of reactions, upload the file.
+        ui-name : |
+            Single Reaction or List?
+        short-hint : |
+            Are you inputting a single reaction or inputting a csv?
+        long-hint  : |
+            If you want a single reaction, type it above and select Reaction ID. If  you want a list, put them into a csv and select Reaction list and continue to next step.
     Input_List :
         ui-name : |
-            List of Reaction IDs in .csv form
+            (Optional) List of Reactions
         short-hint : |
-            A list of need to know reactions in list form
+            A csv of reactions
         long-hint  : |
-            An optional input to run a list of reactions that you wish to know the delta_g for
-	    
-
-description : |
-   <p>Calculate the thermodynamics of the modelSEED compounds by using a snakemake NWChem computational chemistry pipeline to obtain the delta_g of the reaction. </p>
+           If you have a list of reactions in a csv file, you can upload them here to calculate all of them.
+description: |
+   <p>Calculate the thermodynamics of the modelSEED compounds by using a snakemake NWChem computational chemistry pipeline </p>
