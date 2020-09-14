@@ -277,10 +277,6 @@ class CompMolNWChem_Thermo:
         #for the reaction.
         if not Done:
             
-            print('Calculation Exists, Moving On')
-
-        else:
-            
             id_to_smiles = {}
             data = open('/kb/module/modelseed_test.csv','r')
 
@@ -323,6 +319,9 @@ class CompMolNWChem_Thermo:
                     f.write(id_to_smiles[moldir])
         
             os.system('snakemake -p --cores 3 --snakefile snakemake-scripts/final_pipeline.snakemake -w 12000')
+
+        else:
+            print('Calculation already known, moving on')
 
         # Build KBase Output. Should output entire /simulation directory and build a CompoundSet with Mol2 Files
 
