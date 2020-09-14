@@ -272,6 +272,9 @@ class CompMolNWChem_Thermo:
         else:
             print('Calculations is not finished for one of the metabolotes')
 
+        #If the delta_g for the reaction is not there, we need to run our snakemake pipeline to calculate the reaction free energy
+        #for the reaction.
+        
         id_to_smiles = {}
         data = open('/kb/module/modelseed_test.csv','r')
 
@@ -286,7 +289,7 @@ class CompMolNWChem_Thermo:
         #    reactions = f.readlines()[0].rstrip()
         #    reactant = reactions.split('=')[0].split('+')
         #    product = reactions.split('=')[1].split('+')
-        #    metabolites = []
+            metabolites = []
             for each in reactants:
                 each = each.strip()
                 metabolites.append(each)
