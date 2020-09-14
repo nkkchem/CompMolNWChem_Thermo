@@ -15,11 +15,8 @@
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
-            "default_values": [ "E.C.:3.2.1.52" ],
-            "field_type": "text",
-            "text_options": {
-                "valid_ws_types": [""]
-            }
+            "default_values": "rxn38358",
+            "field_type": "text"
         },
 	{
 	    "id":"Input_Method",

@@ -192,9 +192,17 @@ class CompMolNWChem_Thermo:
             ).get('copy_file_path')
 
         else:
-
-            Equation_Input = params["Input_File"]
-
+            
+            Reaction = params["Input_File"]
+            with open('nwchem-scripts/EC_modelseed_ID_reactions') as g:
+                for entry in g:
+                    if Reaction == g[1,entry]:
+                        Equation_Input = g[2,entry]
+                    elif Reaction == g[0,entry]:
+                        Equation_Input = g[2,entry]
+                    else:
+                        print('Not in list')
+            
         mol2_file_dir = None        
         ext = os.path.splitext(Equation_Input)[1]
         file_name = os.path.basename(Equation_Input)
