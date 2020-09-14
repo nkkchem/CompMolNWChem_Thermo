@@ -6,8 +6,6 @@ import os
 import sys
 import subprocess as _subprocess
 import csv
-import inchi_to_submission as its
-import extract_properties_mulliken_charges_mol2 as mul
 import compound_parsing as com
 import pandas as pd
 import compound_parsing as parse
