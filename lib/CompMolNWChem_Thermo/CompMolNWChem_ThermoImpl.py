@@ -219,7 +219,7 @@ class CompMolNWChem_Thermo:
         # fill with modelseed ID and correspodning delta_G of metabolites
         # This is the dictionary of all Modelseed cpds with their delta_G values
 
-        with open('modelSeed_ID_delta_G_calculated.csv', 'r') as dfile:
+        with open('nwchem-scripts/modelSeed_ID_delta_G_calculated.csv', 'r') as dfile:
             lines = dfile.readlines()
             for line in lines:
                 key = line.split(',')[0]
