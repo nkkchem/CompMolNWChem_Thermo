@@ -271,55 +271,54 @@ class CompMolNWChem_Thermo:
              print("Reaction free energy for given reaction is: ", G_products-G_reactants)
         else:
             print('Calculations is not finished for one of the metabolotes')
+            Done = True
 
         #If the delta_g for the reaction is not there, we need to run our snakemake pipeline to calculate the reaction free energy
         #for the reaction.
-        
-        id_to_smiles = {}
-        data = open('/kb/module/modelseed_test.csv','r')
+        if Done is False:
+            
+            id_to_smiles = {}
+            data = open('/kb/module/modelseed_test.csv','r')
 
-        for lines in data.readlines():
-            id = lines.split(',')[0]
-            smiles = lines.split(',')[1].rstrip()
-            id_to_smiles[id] = smiles
+            for lines in data.readlines():
+                id = lines.split(',')[0]
+                smiles = lines.split(',')[1].rstrip()
+                id_to_smiles[id] = smiles
 
-        data.close()
+                data.close()
                 
-        #with open(reactionlist,'r') as f:
-        #    reactions = f.readlines()[0].rstrip()
-        #    reactant = reactions.split('=')[0].split('+')
-        #    product = reactions.split('=')[1].split('+')
-        metabolites = []
-        for each in left:
-            each = each.strip()
-            metabolites.append(each)
-        for each in right:
-            each = each.strip()
-            metabolites.append(each)
-
-        for molecule in metabolites:
         
-            moldir = molecule
-            if not os.path.exists(moldir):
-                os.mkdir(moldir)
+                metabolites = []
+                for each in left:
+                    each = each.strip()
+                    metabolites.append(each)
+                for each in right:
+                    each = each.strip()
+                    metabolites.append(each)
+
+            for molecule in metabolites:
+        
+                moldir = molecule
+                if not os.path.exists(moldir):
+                    os.mkdir(moldir)
     
-            initial_structure_dir = moldir + '/initial_structure'
-            if not os.path.exists(initial_structure_dir):
-                os.mkdir(initial_structure_dir)
+                initial_structure_dir = moldir + '/initial_structure'
+                if not os.path.exists(initial_structure_dir):
+                    os.mkdir(initial_structure_dir)
 
-            md_structure_dir = moldir + '/md'
-            if not os.path.exists(md_structure_dir):
-                os.mkdir(md_structure_dir)
+                md_structure_dir = moldir + '/md'
+                if not os.path.exists(md_structure_dir):
+                    os.mkdir(md_structure_dir)
 
-            dft_structure_dir = moldir + '/dft'
-            if not os.path.exists(dft_structure_dir):
-                os.mkdir(dft_structure_dir)
+                dft_structure_dir = moldir + '/dft'
+                if not os.path.exists(dft_structure_dir):
+                    os.mkdir(dft_structure_dir)
 
-            inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
-            with open(inchifile_str,'w+') as f:
-                f.write(id_to_smiles[moldir])
+                inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
+                with open(inchifile_str,'w+') as f:
+                    f.write(id_to_smiles[moldir])
         
-        os.system('snakemake -p --cores 3 --snakefile snakemake-scripts/final_pipeline.snakemake -w 12000')
+            os.system('snakemake -p --cores 3 --snakefile snakemake-scripts/final_pipeline.snakemake -w 12000')
 
         # Build KBase Output. Should output entire /simulation directory and build a CompoundSet with Mol2 Files
 
@@ -333,7 +332,7 @@ class CompMolNWChem_Thermo:
         #output_files = 
         
         report_params = {
-            'message':'',
+            'message':("Reaction free energy for given reaction is: ", G_products-G_reactants),
             'workspace_id': params['workspace_id'],
             'objects_created': [],
             'file_links':output_files,
