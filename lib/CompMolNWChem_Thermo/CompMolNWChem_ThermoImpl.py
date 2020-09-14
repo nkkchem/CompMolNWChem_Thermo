@@ -224,87 +224,87 @@ class CompMolNWChem_Thermo:
         with open('modelSeed_ID_delta_G_calculated.csv', 'r') as dfile:
 	    lines = dfile.readlines()
 	    for line in lines:
-                key = line.split(',')[0]
+		key = line.split(',')[0]
 		G   = line.split(',')[1]
 		modelseedID_to_deltaG[key] = float(G)
 		calculated.append(key)
 
-        modelseedID_to_deltaG['cpd00001'] +=  2.38
-        modelseedID_to_deltaG['cpd00067']  = -268.61
+	modelseedID_to_deltaG['cpd00001'] +=  2.38
+	modelseedID_to_deltaG['cpd00067']  = -268.61
 
 
-        # map metabolites to the reactions with stoichmetry 
+	# map metabolites to the reactions with stoichmetry 
 
-        reactionlist = scratch_file_path
+	reactionlist = scratch_file_path
 
-        with open(reactionlist,'r') as f:
-            reactions = f.readlines()[0].rstrip().replace(' ', '')
-            reactants = reactions.split('<=>')[0].split('+')
-            products  = reactions.split('<=>')[1].split('+')
+	with open(reactionlist,'r') as f:
+	    reactions = f.readlines()[0].rstrip().replace(' ', '')
+	    reactants = reactions.split('<=>')[0].split('+')
+	    products  = reactions.split('<=>')[1].split('+')
 
-            G_reactants = 0
-            left = []
-            stoich_left = []
-            for reactant in reactants:
-                stoich_left.append(int((re.findall('(\(\d+\))cpd', reactant)[0]).replace('(','').replace(')', '')))
-                reactant = re.search(re.findall('[a-zA-Z]{3}\d{5}', reactant)[0], reactant).group(0)
-                left.append(reactant.strip())
+	    G_reactants = 0
+	    left = []
+	    stoich_left = []
+	    for reactant in reactants:
+		stoich_left.append(int((re.findall('(\(\d+\))cpd', reactant)[0]).replace('(','').replace(')', '')))
+		reactant = re.search(re.findall('[a-zA-Z]{3}\d{5}', reactant)[0], reactant).group(0)
+		left.append(reactant.strip())
 
-            G_products = 0
-            right = []
-            stoich_right = []
-            for product in products:
-                stoich_right.append(int((re.findall('(\(\d+\))cpd', product)[0]).replace('(','').replace(')', '')))
-                product = re.search(re.findall('[a-zA-Z]{3}\d{5}', product)[0], product).group(0)
-                right.append(product.strip())
+	    G_products = 0
+	    right = []
+	    stoich_right = []
+	    for product in products:
+		stoich_right.append(int((re.findall('(\(\d+\))cpd', product)[0]).replace('(','').replace(')', '')))
+		product = re.search(re.findall('[a-zA-Z]{3}\d{5}', product)[0], product).group(0)
+		right.append(product.strip())
 
-            print(stoich_right, right)
-            print(stoich_left, left)
+	    print(stoich_right, right)
+	    print(stoich_left, left)
 
-        #id_to_smiles = {}
-        #data = open('/kb/module/modelseed_test.csv','r')
+	#id_to_smiles = {}
+	#data = open('/kb/module/modelseed_test.csv','r')
 
-        #for lines in data.readlines():
-        #    id = lines.split(',')[0]
-        #    smiles = lines.split(',')[1].rstrip()
-        #    id_to_smiles[id] = smiles
+	#for lines in data.readlines():
+	#    id = lines.split(',')[0]
+	#    smiles = lines.split(',')[1].rstrip()
+	#    id_to_smiles[id] = smiles
 
-        #data.close()
+	#data.close()
 
-        #with open(reactionlist,'r') as f:
-        #    reactions = f.readlines()[0].rstrip()
-        #    reactant = reactions.split('=')[0].split('+')
-        #    product = reactions.split('=')[1].split('+')
-        #    metabolites = []
-            for each in reactants:
-                each = each.strip()
-                metabolites.append(each)
-            for each in products:
-                each = each.strip()
-                metabolites.append(each)
+	#with open(reactionlist,'r') as f:
+	#    reactions = f.readlines()[0].rstrip()
+	#    reactant = reactions.split('=')[0].split('+')
+	#    product = reactions.split('=')[1].split('+')
+	#    metabolites = []
+	    for each in reactants:
+		each = each.strip()
+		metabolites.append(each)
+	    for each in products:
+		each = each.strip()
+		metabolites.append(each)
 
-            for molecule in metabolites:
-                
-                moldir = molecule
-                if not os.path.exists(moldir):
-                    os.mkdir(moldir)
+	    for molecule in metabolites:
+		
+		moldir = molecule
+		if not os.path.exists(moldir):
+		    os.mkdir(moldir)
     
-                initial_structure_dir = moldir + '/initial_structure'
-                if not os.path.exists(initial_structure_dir):
-                    os.mkdir(initial_structure_dir)
+		initial_structure_dir = moldir + '/initial_structure'
+		if not os.path.exists(initial_structure_dir):
+		    os.mkdir(initial_structure_dir)
 
-                md_structure_dir = moldir + '/md'
-                if not os.path.exists(md_structure_dir):
-                    os.mkdir(md_structure_dir)
+		md_structure_dir = moldir + '/md'
+		if not os.path.exists(md_structure_dir):
+		    os.mkdir(md_structure_dir)
 
-                dft_structure_dir = moldir + '/dft'
-                if not os.path.exists(dft_structure_dir):
-                    os.mkdir(dft_structure_dir)
+		dft_structure_dir = moldir + '/dft'
+		if not os.path.exists(dft_structure_dir):
+		    os.mkdir(dft_structure_dir)
 
-                inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
-                with open(inchifile_str,'w+') as f:
-                    f.write(id_to_smiles[moldir])
-        
+		inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
+		with open(inchifile_str,'w+') as f:
+		    f.write(id_to_smiles[moldir])
+	
         os.system('snakemake -p --cores 3 --snakefile snakemake-scripts/final_pipeline.snakemake -w 12000')
 
         # Build KBase Output. Should output entire /simulation directory and build a CompoundSet with Mol2 Files
