@@ -193,15 +193,17 @@ class CompMolNWChem_Thermo:
 
         else:
             
-            Reaction = params["Input_File"]
-            with open('nwchem-scripts/EC_modelseed_ID_reactions.csv') as g:
-                for entry in g:
-                    if Reaction == g[1,entry]:
-                        Equation_Input = g[2,entry]
-                    elif Reaction == g[0,entry]:
-                        Equation_Input = g[2,entry]
-                    else:
-                        print('Not in list')
+            with open('nwchem-scripts/EC_modelseed_ID_reactions.csv') as csv_input:
+    
+               Reaction_Frame = pd.read_csv(csv_input)
+               length = len(Reaction_Frame.index)
+
+               for itr in range(0,length):
+        
+                   if Reaction == Reaction_Frame.EC.iloc[itr]:
+                       Equation_Input = Reaction_Frame.reaction.iloc[itr]
+                   elif Reaction == Reaction_Frame.rxn_ID.iloc[itr]:
+                       Equation_Input = Reaction_Frame.reaction.iloc[itr]
             
         mol2_file_dir = None        
         ext = os.path.splitext(Equation_Input)[1]
