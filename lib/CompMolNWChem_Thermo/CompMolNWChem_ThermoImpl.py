@@ -269,7 +269,7 @@ class CompMolNWChem_Thermo:
                  G_products += stoich_right[jj] * float(modelseedID_to_deltaG[right[kk]])
 
              print("Reaction free energy for given reaction is: ", G_products-G_reactants)
-              Done = True
+             Done = True
         else:
             print('Calculations is not finished for one of the metabolotes')
 
