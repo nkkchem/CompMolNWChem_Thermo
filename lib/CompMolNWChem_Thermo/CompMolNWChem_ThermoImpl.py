@@ -192,7 +192,8 @@ class CompMolNWChem_Thermo:
             ).get('copy_file_path')
 
         else:
-            
+
+            Reaction = params['Input_File']
             with open('nwchem-scripts/EC_modelseed_ID_reactions.csv') as csv_input:
     
                Reaction_Frame = pd.read_csv(csv_input)
