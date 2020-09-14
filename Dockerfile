@@ -69,20 +69,20 @@ ENV     NWCHEM_BIN=${NWCHEM_TOP}/bin/LINUX64
 ENV     NWCHEM_TEMPLATES_DIR=${NWCHEM_DATA}/templates
 ENV     PATH="${NWCHEM_BIN}:$PATH"
 
-COPY ./nwchem-scripts/inchi_to_submission.py ${NWCHEM_BIN}/
-COPY ./nwchem-scripts/extract_properties_mulliken_charges_mol2.py ${NWCHEM_BIN}/
 COPY ./nwchem-scripts/compound_parsing.py ${NWCHEM_BIN}/
 COPY ./nwchem-scripts/export.py ${NWCHEM_BIN}/
 COPY ./nwchem-scripts/CompoundSetUtil.py ${NWCHEM_BIN}/
 COPY ./nwchem-scripts/extract_properties.py ${NWCHEM_BIN}/
 COPY ./nwchem-scripts/inchiTo3D.py ${NWCHEM_BIN}/
-COPY ./nwchem-scripts/dft-cme.py ${NWCHEM_BIN}/
-COPY ./nwchem-scripts/create_nw_files.py ${NWCHEM_BIN}
+COPY ./nwchem-scripts/create_nw_files.py ${NWCHEM_BIN}/
+COPY ./nwchem-scripts/modelSeed_ID_delta_G_calculated.csv ${NWCHEM_BIN}/
+COPY ./nwchem-scripts/EC_modelseed_ID_reactions.csv ${NWCHEM_BIN}/
 COPY ./snakemake-scripts/final_pipeline.snakemake ${NWCHEM_BIN}
 COPY ./snakemake-scripts/cme.py ${NWCHEM_BIN}
 COPY ./dft_templates/template_dft.nw ${NWCHEM_BIN}
 COPY ./dft_templates/template_dft.sbatch ${NWCHEM_BIN}
 COPY ./dft_templates/template_odft.nw ${NWCHEM_BIN}
+
 RUN   mkdir ${NWCHEM_SIM_DIR}
 
 # -----------------------------------------
