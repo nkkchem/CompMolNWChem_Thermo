@@ -194,7 +194,7 @@ class CompMolNWChem_Thermo:
         else:
             
             Reaction = params["Input_File"]
-            with open('nwchem-scripts/EC_modelseed_ID_reactions') as g:
+            with open('nwchem-scripts/EC_modelseed_ID_reactions.csv') as g:
                 for entry in g:
                     if Reaction == g[1,entry]:
                         Equation_Input = g[2,entry]
