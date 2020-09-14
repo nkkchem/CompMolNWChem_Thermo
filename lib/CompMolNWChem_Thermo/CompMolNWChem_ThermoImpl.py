@@ -273,7 +273,7 @@ class CompMolNWChem_Thermo:
         #    reactions = f.readlines()[0].rstrip()
         #    reactant = reactions.split('=')[0].split('+')
         #    product = reactions.split('=')[1].split('+')
-        #    metabolites = []
+            metabolites = []
             for each in reactants:
                 each = each.strip()
                 metabolites.append(each)
