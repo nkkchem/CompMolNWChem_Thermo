@@ -275,7 +275,11 @@ class CompMolNWChem_Thermo:
 
         #If the delta_g for the reaction is not there, we need to run our snakemake pipeline to calculate the reaction free energy
         #for the reaction.
-        if Done is False:
+        if not Done:
+            
+            print('Calculation Exists, Moving On')
+
+        else:
             
             id_to_smiles = {}
             data = open('/kb/module/modelseed_test.csv','r')
