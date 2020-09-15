@@ -271,9 +271,9 @@ class CompMolNWChem_Thermo:
 
         if(set(left).issubset(set(calculated))) and set(right).issubset(set(calculated)):
              for jj in range(len(left)):
-                 G_reactants +=  stoich_left[jj] * float(modelseedID_to_deltaG[left[jj]])
+                 G_reactants +=  stoich_left[jj-1] * float(modelseedID_to_deltaG[left[jj-1]])
              for kk in range(len(right)):
-                 G_products += stoich_right[jj] * float(modelseedID_to_deltaG[right[kk]])
+                 G_products += stoich_right[jj-1] * float(modelseedID_to_deltaG[right[kk-1]])
 
              print("Reaction free energy for given reaction is: ", G_products-G_reactants)
              Done = True
