@@ -269,23 +269,23 @@ class CompMolNWChem_Thermo:
 
         # Extract delta_g for reactions for which we have performed calculations
 
-        if(set(left).issubset(set(calculated))) and set(right).issubset(set(calculated)):
-             for jj in range(len(left)):
-                 G_reactants +=  stoich_left[jj] * float(modelseedID_to_deltaG[left[jj]])
-             for kk in range(len(right)):
-                 G_products += stoich_right[kk] * float(modelseedID_to_deltaG[right[kk]])
+        #if(set(left).issubset(set(calculated))) and set(right).issubset(set(calculated)):
+        #     for jj in range(len(left)):
+        #         G_reactants +=  stoich_left[jj] * float(modelseedID_to_deltaG[left[jj]])
+        #     for kk in range(len(right)):
+        #         G_products += stoich_right[kk] * float(modelseedID_to_deltaG[right[kk]])
 
-             print("Reaction free energy for given reaction is: ", G_products-G_reactants)
-             Done = True
-        else:
-            print('Calculations is not finished for one of the metabolotes')
+#             print("Reaction free energy for given reaction is: ", G_products-G_reactants)
+#             Done = True
+#        else:
+#            print('Calculations is not finished for one of the metabolotes')
 
         #If the delta_g for the reaction is not there, we need to run our snakemake pipeline to calculate the reaction free energy
         #for the reaction.
         if not Done:
             
             id_to_smiles = {}
-            data = open('/kb/module/modelseed_test.csv','r')
+            data = open('/kb/module/modelSeed_ID_SMILES.csv','r')
 
             for lines in data.readlines():
                 id = lines.split(',')[0]
