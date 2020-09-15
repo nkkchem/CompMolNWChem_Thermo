@@ -237,7 +237,13 @@ class CompMolNWChem_Thermo:
         modelseedID_to_deltaG['cpd00001'] +=  2.38
         modelseedID_to_deltaG['cpd00067']  = -268.61
 
-
+        keggID_to_charge = {}
+        with open('Ph7_charge_modelseedID.csv', 'r') as dfile:
+            lines = dfile.readlines()
+            for i in lines:
+                key = i.split(',')[0]
+                charge   = i.split(',')[1]
+                keggID_to_charge[key] = charge
         # map metabolites to the reactions with stoichmetry 
 
         reactionlist = Equation_Input
@@ -247,6 +253,7 @@ class CompMolNWChem_Thermo:
             reactants = reactions.split('<=>')[0].split('+')
             products  = reactions.split('<=>')[1].split('+')
 
+            charge_reactants = 0
             G_reactants = 0
             left = []
             stoich_left = []
@@ -255,6 +262,7 @@ class CompMolNWChem_Thermo:
                 reactant = re.search(re.findall('[a-zA-Z]{3}\d{5}', reactant)[0], reactant).group(0)
                 left.append(reactant.strip())
 
+            charge_products = 0
             G_products = 0
             right = []
             stoich_right = []
@@ -268,20 +276,46 @@ class CompMolNWChem_Thermo:
 
 
         # Extract delta_g for reactions for which we have performed calculations
+        
+        if(set(left).issubset(set(calculated))) and set(right).issubset(set(calculated)):
+            for jj in range(len(left)):
+                G_reactants +=  stoich_left[jj] * float(modelseedID_to_deltaG[left[jj]])
+                charge_reactants += float(keggID_to_charge[left[jj]])
 
-        #if(set(left).issubset(set(calculated))) and set(right).issubset(set(calculated)):
-        #     for jj in range(len(left)):
-        #         G_reactants +=  stoich_left[jj] * float(modelseedID_to_deltaG[left[jj]])
-        #     for kk in range(len(right)):
-        #         G_products += stoich_right[kk] * float(modelseedID_to_deltaG[right[kk]])
+            for kk in range(len(right)):
+                G_products += stoich_right[kk] * float(modelseedID_to_deltaG[right[kk]])
+                charge_products += float(keggID_to_charge[right[kk]])
 
-#             print("Reaction free energy for given reaction is: ", G_products-G_reactants)
-#             Done = True
-#        else:
-#            print('Calculations is not finished for one of the metabolotes')
+            charge = float(charge_products - charge_reactants)
+            G      = float(G_products-G_reactants)
+            if charge == -1:
+                G  = G - 268.61
+            if charge == -2:
+                G  = G - 268.61*2
+            if charge == -3:
+                G  = G - 268.61*3
+            if charge == +1:
+                G  = G + 268.61*1
+            if charge == +2:
+                G  = G + 268.61*2
+            if charge == +3:
+                G  = G + 268.61*3
+            if charge == +4:
+                G  = G + 268.61*4
+            if charge == -4:
+                G  = G - 268.61*4
+            if charge == 0:
+                G  = G 
+                
+            print("Reaction free energy for given reaction is: ", G)
+            Done = True
+        else:
+            print('Calculations is not finished for one of the metabolotes')
 
+            
         #If the delta_g for the reaction is not there, we need to run our snakemake pipeline to calculate the reaction free energy
         #for the reaction.
+
         if not Done:
             
             id_to_smiles = {}
@@ -341,7 +375,7 @@ class CompMolNWChem_Thermo:
         output_files = self._generate_output_file_list(result_directory)
         #output_files = 
 
-        message = "Reaction free energy for given reaction is " + str(G_products-G_reactants)
+        message = "Reaction free energy for given reaction is " + str(G)
         
         report_params = {
             'message':message,

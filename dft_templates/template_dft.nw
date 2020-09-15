@@ -30,6 +30,7 @@ dft
   mult multiplicity
   maxiter 200
   xc b3lyp
+  disp vdw 3 #Added 
   mulliken
   print "mulliken ao"
   print "final vectors analysis"
@@ -37,6 +38,8 @@ end
 
 task dft optimize ignore
 task dft freq
+
+unset dft:disp #Added
 
 basis "large" spherical
 * library 6-311++G**

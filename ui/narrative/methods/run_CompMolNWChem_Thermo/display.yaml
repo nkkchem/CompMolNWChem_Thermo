@@ -21,7 +21,7 @@ parameters :
         short-hint : |
             The desired single reaction with EC or ModelSEED IDs
         long-hint  : |
-            The desired single reaction with EC (E.C.:3.2.1.52) reaction ID or ModelSEED (rxn38348) reaction ID
+            The desired single reaction with EC (3.2.1.52) reaction ID or ModelSEED (rxn38348) reaction ID
     Input_Method :
         ui-name : |
             Single Reaction or List?
