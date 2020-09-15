@@ -280,11 +280,11 @@ class CompMolNWChem_Thermo:
         if(set(left).issubset(set(calculated))) and set(right).issubset(set(calculated)):
             for jj in range(len(left)):
                 G_reactants +=  stoich_left[jj] * float(modelseedID_to_deltaG[left[jj]])
-                charge_reactants += float(keggID_to_charge[left[jj]])
+                charge_reactants += stoich_left[jj] * float(keggID_to_charge[left[jj]])
 
             for kk in range(len(right)):
                 G_products += stoich_right[kk] * float(modelseedID_to_deltaG[right[kk]])
-                charge_products += float(keggID_to_charge[right[kk]])
+                charge_products += stoich_right[kk] * float(keggID_to_charge[right[kk]])
 
             charge = float(charge_products - charge_reactants)
             G      = float(G_products-G_reactants)
