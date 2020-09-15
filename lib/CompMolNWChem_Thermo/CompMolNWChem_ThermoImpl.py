@@ -206,11 +206,11 @@ class CompMolNWChem_Thermo:
                    elif Reaction == Reaction_Frame.rxn_ID.iloc[itr]:
                        Equation_Input = Reaction_Frame.reaction.iloc[itr]
 
-                Eq_List = [Equation_Input]
-                with open('Reaction.csv','w',newline = '') as file:
-                    writer = csv.writer(file)
-                    writer.writerow(Eq_List)
-                Equation_Input = 'Reaction.csv'
+            Eq_List = [Equation_Input]
+            with open('Reaction.csv','w',newline = '') as file:
+                writer = csv.writer(file)
+                writer.writerow(Eq_List)
+            Equation_Input = 'Reaction.csv'
                 
         mol2_file_dir = None        
         ext = os.path.splitext(Equation_Input)[1]

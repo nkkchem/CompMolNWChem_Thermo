@@ -4,7 +4,7 @@
 name: NWChem Computational Chemistry Calculations Thermodynamics
 
 tooltip: |
- Perform computational chemistry calculations using NWChem to obtain quantum chemical properties in order to obtain the 
+ Perform computational chemistry calculations using NWChem to obtain quantum chemical properties for use in Thermodynamic Analysis.
 
 screenshots: []
 
