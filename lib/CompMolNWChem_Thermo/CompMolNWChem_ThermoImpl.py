@@ -186,7 +186,7 @@ class CompMolNWChem_Thermo:
         
         # Check the Input Method and set Equation_Input as the necessary 
 
-        if params['Input_Method'] == "Reaction File":
+        if params['Input_Method'] == "file":
         
             Equation_Input = self.dfu.download_staging_file({'staging_file_subdir_path':params['Input_File']}
             ).get('copy_file_path')
@@ -210,6 +210,8 @@ class CompMolNWChem_Thermo:
                 with open('Reaction.csv','w',newline = '') as file:
                     writer = csv.writer(file)
                     writer.writerow(Eq_List)
+                Equation_Input = 'Reaction.csv'
+                
         mol2_file_dir = None        
         ext = os.path.splitext(Equation_Input)[1]
         file_name = os.path.basename(Equation_Input)
