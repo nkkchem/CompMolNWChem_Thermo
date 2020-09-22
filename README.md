@@ -23,13 +23,15 @@ After making any additional changes to this repo, run `kb-sdk test` again to ver
 
 To use this code in another SDK module, call `kb-sdk install CompMolNWChem_Thermo` in the other module's root directory.
 
-# Help
-
-You may find the answers to your questions in our [FAQ](https://kbase.github.io/kb_sdk_docs/references/questions_and_answers.html) or [Troubleshooting Guide](https://kbase.github.io/kb_sdk_docs/references/troubleshooting.html).
+# Reference
 
 (1) Apr`a, E. et al. NWChem: Past, present, and future. The Journal of Chemical Physics
 2020, 152, 184102.
 (2)	Arkin, A. P. et al. The DOE Systems Biology Knowledgebase (KBase). bioRxiv 2016,
+
+# Help
+
+You may find the answers to your questions in our [FAQ](https://kbase.github.io/kb_sdk_docs/references/questions_and_answers.html) or [Troubleshooting Guide](https://kbase.github.io/kb_sdk_docs/references/troubleshooting.html).
 
 # Disclaimer
 
