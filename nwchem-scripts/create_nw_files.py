@@ -35,7 +35,7 @@ def dft_nw_file(InChI_key):
 
          total_elctrons = sum_elctrons + float(CHARGE)
          if total_elctrons % 2 == 0:
-             lines = lines.replace('multiplicity', '3')
+             lines = lines.replace('multiplicity', '1')
          else:
              lines = lines.replace('multiplicity', '2 \n  odft')
 
