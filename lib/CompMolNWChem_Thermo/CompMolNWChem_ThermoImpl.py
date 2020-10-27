@@ -32,7 +32,7 @@ from snakemake import snakemake
 from installed_clients.KBaseReportClient import KBaseReport
 from installed_clients.DataFileUtilClient import DataFileUtil
 from installed_clients.CompoundSetUtilsClient import CompoundSetUtils
-
+from installed_clients.CachingUtils import CachingUtils
 #from CompMolNWChem import CompoundSetUtil
 
 #END_HEADER
@@ -174,7 +174,7 @@ class CompMolNWChem_Thermo:
         # ctx is the context object
         # return variables are: output
         #BEGIN run_CompMolNWChem_Thermo
-
+#--------------------------------------------------------------------------------------------------------------------
         # Initial Tests to Check for Proper Inputs
 
         for name in ['Input_File','Input_Method','workspace_name']:
@@ -183,7 +183,7 @@ class CompMolNWChem_Thermo:
         if not isinstance(params['Input_File'], str):
             raise ValueError('Input_File must be a string')
 
-        
+#--------------------------------------------------------------------------------------------------------------------        
         # Check the Input Method and set Equation_Input as the necessary 
 
         if params['Input_Method'] == "file":
@@ -215,7 +215,8 @@ class CompMolNWChem_Thermo:
         mol2_file_dir = None        
         ext = os.path.splitext(Equation_Input)[1]
         file_name = os.path.basename(Equation_Input)
-       
+            
+#--------------------------------------------------------------------------------------------------------------------        
         # SNAKEMAKE PIPELINE START, READ FILES IN AND CHECK EXISTING REACTIONS
 
         from snakemake import snakemake
@@ -337,6 +338,22 @@ class CompMolNWChem_Thermo:
                     each = each.strip()
                     metabolites.append(each)
 
+                 
+            # Check to see if cache data already exists for these compounds
+            for molecule in metabolites:
+
+                moldir = molecule
+                
+                cache_data = {
+                    'Metabolites' : moldir
+                    }
+                cache_id = caching.get_cache_id(ctx['token'], cache_data)
+                result = caching.download_cache_string(ctx['token'], cache_id)
+                if not result or not result.strip():
+                    print('None')
+                else:
+                    print('Some')
+                    
             for molecule in metabolites:
         
                 moldir = molecule
@@ -358,7 +375,8 @@ class CompMolNWChem_Thermo:
                 inchifile_str = initial_structure_dir + '/' + moldir + '.smiles'
                 with open(inchifile_str,'w+') as f:
                     f.write(id_to_smiles[moldir])
-        
+
+           
             os.system('snakemake -p --cores 3 --snakefile snakemake-scripts/final_pipeline.snakemake -w 12000')
 
         else:
@@ -367,14 +385,56 @@ class CompMolNWChem_Thermo:
         # Build KBase Output. Should output entire /simulation directory and build a CompoundSet with Mol2 Files
 
         #result_directory = '/kb/module/snakemake-scripts'
-        result_directory = '/kb/module/'
+        result_directory = '/kb/module/dft'
 
+#-----------------------------------------------------------------------------------------------------------------
+        # Extract the information from the results file
+            
+        df = pd.DataFrame()
+        G = pd.DataFrame()
+        for molecule in metabolites:
 
+            moldir = molecule
+
+            result_file = moldir + '_properties.dat'
+
+            # Grab the third last line of the properties file
+            
+            with open('dft/' + result_file,'r') as f:
+                all_lines = f.readlines()
+                length = len(all_lines)
+                d = all_lines[(length - 3)]
+                d = d.split()
+                df = df.append(d)
+
+            # Save the last number of the line to a new file.
+            with open('dft/'+ moldir + '_extracted_properties.dat','w') as f:
+                    
+                string = str(df.iloc[-1].values)
+                string = string.replace("['", "")
+                string = string.replace("']","")
+                f.write(string)
+                G_calc = float(string)
+
+            # Cache The Results
+                
+            cache_data = {
+                'Metabolite' : moldir
+                }
+            result = {
+                "Metabolite" : moldir,
+                "Free_Energy" : G_calc
+                      }
+
+            cache_id = CachingUtils.get_cache_id(ctx['token'], cache_data)
+
+            CachingUtils.upload_to_cache(ctx['token'], cache_id, result)
+#-----------------------------------------------------------------------------------------------------------------
         ## Create Extended Report
         
         output_files = self._generate_output_file_list(result_directory)
-        #output_files = 
 
+        
         message = "Reaction free energy for given reaction is " + str(G)
         
         report_params = {
